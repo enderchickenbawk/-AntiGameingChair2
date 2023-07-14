@@ -1,0 +1,31 @@
+package club.mineman.antigamingchair.check.impl.speed; 
+  
+ import club.mineman.antigamingchair.AntiGamingChair; 
+ import club.mineman.antigamingchair.check.checks.PacketCheck; 
+ import club.mineman.antigamingchair.data.PlayerData; 
+ import club.mineman.antigamingchair.event.player.PlayerAlertEvent; 
+ import club.mineman.antigamingchair.util.MathUtil; 
+ import net.minecraft.server.v1_8_R1.Packet; 
+ import org.bukkit.entity.Player; 
+  
+ public class SpeedR2 extends PacketCheck { 
+     public SpeedR2(AntiGamingChair plugin, PlayerData playerData) { 
+         super(plugin, playerData); 
+     } 
+     private int ticks; 
+     private int threshold; 
+  
+     @Override 
+     public void handleCheck(Player player, Packet packet) { 
+         if (this.playerData.isSneaking() && this.playerData.isSprinting()) { 
+             this.ticks++; 
+             if (this.threshold++ > MathUtil.pingFormula(this.playerData.getPing())) { 
+                 this.alert(PlayerAlertEvent.AlertType.RELEASE, player, String.format("Speed Check R2. T: %s", this.ticks)); 
+                 this.threshold = 0; 
+             } 
+         } else { 
+             this.ticks = 0; 
+             this.threshold = 0; 
+         } 
+     } 
+ }
